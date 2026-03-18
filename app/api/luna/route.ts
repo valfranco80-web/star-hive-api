@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { messages, system } = await req.json();
+ const { messages, system, max_tokens } = await req.json();
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 1024,
+     max_tokens: max_tokens || 1024,
       system,
       messages,
     }),
