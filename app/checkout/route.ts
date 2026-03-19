@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
     subscription_data: {
       trial_period_days: 7,
     },
-    success_url: `https://your-lovable-app-url.com?success=true`,
-    cancel_url: `https://your-lovable-app-url.com?canceled=true`,
+    success_url: `https://star-hive-tarot.lovable.app?success=true`,
+cancel_url: `https://star-hive-tarot.lovable.app?canceled=true`,
   });
 
   return NextResponse.json({ url: session.url }, {
