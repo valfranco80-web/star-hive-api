@@ -33,24 +33,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
 
- if (event.type === "customer.subscription.deleted") {
-  const subscription = event.data.object as Stripe.Subscription;
-  const customerId = subscription.customer as string;
-  const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer;
-  if (customer && !customer.deleted && customer.email) {
-    await supabase
-      .from("profiles")
-      .update({ is_premium: false, stripe_subscription_id: null })
-      .eq("email", customer.email);
-  }
-}
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const email = session.customer_email;
+    const subscriptionId = session.subscription as string;
+    if (email) {
+      await supabase
+        .from("profiles")
+        .update({ is_premium: true, stripe_subscription_id: subscriptionId })
+        .eq("email", email);
     }
   }
 
   if (event.type === "customer.subscription.deleted") {
     const subscription = event.data.object as Stripe.Subscription;
-    const customer = await stripe.customers.retrieve(subscription.customer as string);
-    if (customer && !customer.deleted && customer.email) {
+    const customer = await stripe.customers.retrieve(subscription.customer as string) as Stripe.Customer;
+    if (customer.email) {
       await supabase
         .from("profiles")
         .update({ is_premium: false, stripe_subscription_id: null })
